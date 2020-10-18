@@ -1,0 +1,841 @@
+#:kivy 1.0
+#: import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+#:set FONT "30sp"
+#:set FONTSMALL "20sp"
+#:set FONTTINY "17sp"
+#:set FONTLARGE "40sp"
+
+#:set SIZE [100, 100]
+#:set SIZEMEDIUM [80, 80]
+
+#:set TRANSPARENT [1, 1, 1, 0]
+#:set RED [255, 0, 0, 1]
+#:set BLACK [1, 1, 1, 1]
+
+<RootWidget>:
+	orientation: 'horizontal'
+    Color:
+        rgba:1,1,1,1
+	ScreenManager:
+		transition: SlideTransition()
+		size_hint_x: .8
+		id: screen_management
+		main_screen_p: main_screen
+
+		MainScreen:
+			id: main_screen
+		DVDScreen:
+		DocCamScreen:
+		CableTvScreen:
+		CableTvGuideScreen:
+		CableTvPresetsScreen:
+		WifiCollabScreen:
+		RebootScreen:
+		HelpScreen:
+		HeaderScreen:
+		EmailScreen:
+		LaptopScreen:
+
+	ScreenManager:
+		size_hint_x: .2
+		id: screen_management_volume
+		shared_screen_p: shared_screen
+
+		SharedScreen:
+			id: shared_screen
+		HelpToolsScreen:
+		CableGuideToolsScreen:
+
+<UISToggleButton@ToggleButton>:
+	font_size: FONT
+	size: SIZE
+	size_hint: (None, None)
+	halign: 'center'
+	valign: 'middle'
+
+<UISButton@Button>:
+	font_size: FONT
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+
+<UISButtonSmall@Button>:
+	font_size: FONTSMALL
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+
+<UISButtonLarge@Button>:
+	font_size: FONTLARGE
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+
+<UISButtonHome@Button>:
+	font_size: FONT
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+	pos_hint: {'center_x': .105, 'center_y': .11}
+	text: 'Home'
+
+<UISButtonHelp@Button>:
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+	pos_hint: {'center_x': .105, 'center_y': .335}
+	UISImage:
+		source: 'images/Help.png'
+
+<UISButtonSpeakCommand@Button>:
+	size: SIZE
+	halign: 'center'
+	valign: 'middle'
+	size_hint: (None, None)
+	pos_hint: {'center_x': .105, 'center_y': .335}
+	UISImage:
+		source: 'images/SpeakCommand.png'		
+		
+<UISLabel@Label>:
+	font_size: FONT
+	size_hint: (None, None)
+	color: BLACK
+
+<UISImage@Image>:
+	center_x: self.parent.center_x
+	center_y: self.parent.center_y
+
+<MainScreen>:
+	pc_p: pc  
+	laptop_p: laptop
+	dvd_p: dvd
+	cable_p: cable 
+	doccam_p: doccam  
+	wificollab_p: wificollab
+
+	name: 'main'
+	FloatLayout:
+		UISButtonHelp:
+			id: main_help
+			on_release: root.change_screens()
+
+		Label:
+			id: header_date
+			pos_hint: {'center_x': .2, 'center_y': .06}
+			font_size: FONTTINY
+			size_hint: (None, None)
+			color: BLACK
+			
+		UISButtonSpeakCommand:
+			id: speakCommand
+			on_press: root.SpeakCommand(self.state)
+
+		GridLayout:
+			cols: 2
+			rows: 1
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .51, 'center_y': .19}
+		
+			UISToggleButton:
+				id: on
+				text: 'On'
+				group: 'power'
+				on_press: root.system_on()
+			
+			UISToggleButton: 
+				id: off
+				text: 'Off'
+				group: 'power'
+				on_press: root.system_off()
+				
+		GridLayout:
+			cols: 3
+			rows: 2
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .91, 'center_y': .19}
+		
+			UISToggleButton:
+				id: pc
+				text: 'PC'
+				group: 'source'
+				on_state: root.pc_selected(self.state)
+				
+			UISToggleButton:
+				id: laptop
+				text: 'Laptop'
+				group: 'source'
+				on_state: root.laptop_selected(self.state)	
+				on_release: root.manager.current = 'laptopscreen'
+				on_press: root.checkiflaptopalreadypressed(self.state)
+				
+			UISToggleButton:	
+				id: wificollab
+				text: 'WiFi\nProj'
+				group: 'source'
+				on_state: root.wifi_collab_selected(self.state)
+				on_release: root.manager.current = 'wifi_collab_screen'
+				on_press: root.checkifwificollabalreadypressed(self.state)				
+
+			UISToggleButton:
+				id: cable
+				text: 'Cable\nTV'
+				group: 'source'
+				on_state: root.cable_selected(self.state)
+				on_release: root.manager.current = 'cable_tvscreen'
+				on_press: root.checkifcablealreadypressed(self.state)
+
+			UISToggleButton:
+				id: dvd
+				text: 'DVD/\nVCR'
+				group: 'source'
+				on_state: root.dvd_selected(self.state)
+				on_release: root.manager.current = 'dvdscreen'
+				on_press: root.checkifdvdalreadypressed(self.state)
+
+			UISToggleButton:
+				id: doccam
+				text: 'Doc\nCam'
+				group: 'source'
+				on_state: root.doc_cam_selected(self.state)
+				on_release: root.manager.current = 'doc_camscreen'
+				on_press: root.checkifdoccamalreadypressed(self.state)
+			
+		HeaderScreen:
+			id: main_header	
+			
+		UISLabel:
+			id: listsources
+			text: 'Change source to:'
+			pos_hint: {'center_x': .66, 'center_y': .72}
+		
+		UISLabel:
+			id: projectorpower 
+			text: 'Turn Projector:'
+			pos_hint: {'center_x': .2, 'center_y': .72}
+			
+<DVDScreen>:
+	name: 'dvdscreen'
+	FloatLayout:
+		UISButtonHelp:
+			id: dvd_help			
+			on_release: root.change_screens()
+	
+		UISLabel:
+			id: dvdvcrlabel
+			text: 'Change source to:'
+			pos_hint: {'center_x': .19, 'center_y': .72}
+	
+		UISLabel:
+			id: dvdvcrplayercontrols
+			text: 'Player Controls:'
+			pos_hint: {'center_x': .65, 'center_y': .72}
+		
+		UISButtonHome:			
+			on_release: root.manager.current = 'main'
+
+		GridLayout:
+			cols: 2
+			rows: 1
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .51, 'center_y': .19}	
+			
+			UISToggleButton:
+				id: ondvd
+				text: 'DVD'
+				group: 'selectdvdvcr'
+				on_press: root.dvdvcr_dvd_selected(self.state)
+			
+			UISToggleButton: 
+				id: onvcr
+				text: 'VCR'
+				group: 'selectdvdvcr'
+				on_press: root.dvdvcr_vcr_selected(self.state)	
+			
+		GridLayout:
+			cols: 3
+			rows: 2
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .9, 'center_y': .19}		
+			
+			UISToggleButton:
+				id: play
+				group: 'dvdcontrols'
+				on_press: root.dvd_play()
+				UISImage:
+					source: 'images/dvd-vcr/Play.png'
+			
+			UISToggleButton: 
+				id: stop
+				group: 'dvdcontrols'
+				on_press: root.dvd_stop()
+				UISImage:
+					source: 'images/dvd-vcr/Stop.png'
+			
+			UISToggleButton: 
+				id: pause
+				group: 'dvdcontrols'
+				on_press: root.dvd_pause()
+				UISImage:
+					source: 'images/dvd-vcr/Pause.png'
+				
+			UISToggleButton: 
+				id: rewind
+				group: 'dvdcontrols'
+				on_press: root.dvd_rew()
+				UISImage:
+					source: 'images/dvd-vcr/Rewind.png'
+
+			UISToggleButton: 
+				id: ff
+				group: 'dvdcontrols'
+				on_press: root.dvd_ff()	
+				UISImage:
+					source: 'images/dvd-vcr/FastForward.png'
+				
+			UISToggleButton: 
+				id: eject
+				group: 'dvdcontrols'
+				on_press: root.dvd_vcr_eject()		
+				UISImage:
+					source: 'images/dvd-vcr/Eject.png'
+			
+		HeaderScreen:
+			id: dvd_header		
+			
+<DocCamScreen>:
+	name: 'doc_camscreen'
+	FloatLayout:
+		UISButtonHelp:
+			id: doccam_help			
+			on_release: root.change_screens()
+
+		UISLabel:
+			id: documentcamera
+			text: 'Document Camera'
+			pos_hint: {'center_x': .57, 'center_y': .72}
+			
+		UISButtonHome:
+			on_release: root.manager.current = 'main'
+			
+		HeaderScreen:
+			id: doc_cam_header	
+		
+		GridLayout:
+			cols: 2
+			rows: 1
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .89, 'center_y': .19}
+		
+			UISToggleButton:
+				id: offdoccam
+				text: 'Off'
+				group: 'doccampower'
+				on_press: root.doc_cam_off(self.state)
+				
+			UISToggleButton:
+				id: ondoccam
+				text: 'On'
+				group: 'doccampower'
+				state: 'down'
+				on_press: root.doc_cam_on(self.state)
+			
+<CableTvScreen>:
+	name: 'cable_tvscreen'
+	FloatLayout:
+		UISButtonHelp:
+			id: cable_help			
+			on_release: root.change_screens()
+
+		UISButtonHome:
+			on_release: root.manager.current = 'main'
+	
+		UISLabel:
+			id: cabletvlabel
+			text: 'Cable TV'
+			pos_hint: {'center_x': .11, 'center_y': .82}
+			
+		GridLayout:
+			cols: 1 
+			rows: 4
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .71, 'center_y': .5}		
+			
+			UISButtonSmall:
+				id: chanup
+				on_press: root.cable_chan_up_selected()              
+				UISImage:
+					source: 'images/cable/ChannelUp.png'
+				
+			UISButtonSmall:
+				id: chandown
+				on_press: root.cable_chan_down_selected()        
+				UISImage:
+					source: 'images/cable/ChannelDown.png'
+					
+			UISButtonSmall:
+				id: cablepresets
+				text: 'Cable\nPresets'
+				on_press: root.manager.current = 'cable_presets_screen'	  		
+
+			UISButtonSmall:
+				id: cablelisting
+				text: 'Cable\nGuide'
+				on_release: root.change_screens_listing()
+
+		GridLayout:
+			cols: 3
+			rows: 4
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .91, 'center_y': .5}				
+
+			UISButtonLarge:
+				id: cablechanone
+				text: '1'
+				on_press: root.cable_chan_one_selected()
+
+			UISButtonLarge:
+				id: cablechantwo
+				text: '2'
+				on_press: root.cable_chan_two_selected()
+
+			UISButtonLarge:
+				id: cablechanthree
+				text: '3'
+				on_press: root.cable_chan_three_selected()
+
+			UISButtonLarge:
+				id: cablechanfour
+				text: '4'
+				on_press: root.cable_chan_four_selected()
+
+			UISButtonLarge:
+				id: cablechanfive
+				text: '5'
+				on_press: root.cable_chan_five_selected()
+
+			UISButtonLarge:
+				id: cablechansix
+				text: '6'
+				on_press: root.cable_chan_six_selected()
+
+			UISButtonLarge:
+				id: cablechanseven
+				text: '7'
+				on_press: root.cable_chan_seven_selected()
+
+			UISButtonLarge:
+				id: cablechaneight
+				text: '8'
+				on_press: root.cable_chan_eight_selected()
+
+			UISButtonLarge:
+				id: cablechannine
+				text: '9'
+				on_press: root.cable_chan_nine_selected()
+				
+			UISButtonLarge:
+				id: invisible_button
+				opacity: 0		
+			
+			UISButtonLarge:
+				id: cablechanzero
+				text: '0'
+				on_press: root.cable_chan_zero_selected()				
+
+<CableTvGuideScreen>:
+	name: 'cable_tv_guide_screen'
+	FloatLayout:
+		ScrollView:
+			id: scrollview_tv_guide
+			bar_width: 20 
+			size_hint: (None, None)
+			size: (640, 480)
+			GridLayout:
+				cols: 1
+				size_hint_y: None
+				height: self.minimum_height
+				Image:
+					source: 'images/cable/listing.jpg'
+					size_hint: None, None
+					size: 640, 1280 
+			
+<CableTvPresetsScreen>:
+	name: 'cable_presets_screen'
+	FloatLayout:	
+		UISButton:
+			on_press: root.manager.current = 'cable_tvscreen'
+			text: 'Back'
+			pos_hint: {'center_x': .1, 'center_y': .11}
+			
+		UISLabel:
+			text: 'Cable TV Presets'
+			pos_hint: {'center_x': .55, 'center_y': .14}
+			
+		GridLayout:
+			cols: 6
+			rows: 3
+			spacing: 5
+			padding: 5 
+			pos_hint: {'center_x': .515, 'center_y': .465}	
+
+			UISButtonSmall:
+				id: cable_campus_channel
+				on_press: root.cable_campus_channel_selected() 
+				UISImage:
+					source: 'images/cable/CampusChannel.png'
+
+			UISButtonSmall:
+				id: cable_abc
+				on_press: root.cable_abc_selected()  
+				UISImage:
+					source: 'images/cable/ABC.png'
+
+			UISButtonSmall:
+				id: cable_cbs
+				on_press: root.cable_cbs_selected()  
+				UISImage:
+					source: 'images/cable/CBS.png'
+
+			UISButtonSmall:
+				id: cable_nbc
+				on_press: root.cable_nbc_selected()
+				UISImage:
+					source: 'images/cable/NBC.png'
+
+			UISButtonSmall:
+				id: cable_fox
+				on_press: root.cable_fox_selected() 
+				UISImage:
+					source: 'images/cable/FOX.png'
+
+			UISButtonSmall:
+				id: cable_pbs
+				on_press: root.cable_pbs_selected()  
+				UISImage:
+					source: 'images/cable/PBS.png'
+
+			UISButtonSmall:
+				id: cable_cnn
+				on_press: root.cable_cnn_selected()
+				UISImage:
+					source: 'images/cable/CNN.png'
+
+			UISButtonSmall:
+				id: cable_cspan
+				on_press: root.cable_cspan_selected()
+				UISImage:
+					source: 'images/cable/CSPAN.png'
+
+			UISButtonSmall:
+				id: cable_twc
+				on_press: root.cable_twc_selected()
+				UISImage:
+					source: 'images/cable/TWC.png'
+
+			UISButtonSmall:
+				id: cable_tlc
+				on_press: root.cable_tlc_selected()
+				UISImage:
+					source: 'images/cable/TLC.png'
+
+			UISButtonSmall:
+				id: cable_hist
+				on_press: root.cable_hist_selected() 
+				UISImage:
+					source: 'images/cable/History.png'
+
+			UISButtonSmall:
+				id: cable_disc
+				on_press: root.cable_disc_selected()
+				UISImage:
+					source: 'images/cable/DiscoveryChannel.png'
+
+			UISButtonSmall:
+				id: cable_ngc
+				on_press: root.cable_ngc_selected()  
+				UISImage:
+					source: 'images/cable/NatGeo.png'
+
+			UISButtonSmall:
+				id: cable_ae
+				on_press: root.cable_ae_selected()   
+				UISImage:
+					source: 'images/cable/AandE.png'
+					
+			UISButtonSmall:
+				id: cable_espnu
+				on_press: root.cable_espnu_selected() 
+				UISImage:
+					source: 'images/cable/ESPNU.png'
+					
+			UISButtonSmall:
+				id: cable_disney
+				on_press: root.cable_disney_selected()  
+				UISImage:
+					source: 'images/cable/DISNEY.png'
+					
+			UISButtonSmall:
+				id: cable_mtvu
+				on_press: root.cable_mtvu_selected() 
+				UISImage:
+					source: 'images/cable/MTVU.png'
+
+			UISButtonSmall:
+				id: cable_syfy
+				on_press: root.cable_syfy_selected()
+				UISImage:
+					source: 'images/cable/Syfy.png'
+			
+<WifiCollabScreen>:
+	name: 'wifi_collab_screen'	
+	FloatLayout:
+		UISLabel:
+			id: wifiprojection
+			text: 'WiFi\nProject'
+			pos_hint: {'center_x': .12, 'center_y': .82}
+
+		UISButtonHelp:
+			id: wificollab_help			
+			on_release: root.change_screens()
+
+		UISButtonHome:
+			on_release: root.manager.current = 'main'
+			
+		TabbedPanel:
+			do_default_tab: False
+			tab_width: 160
+			tab_height: 80
+			pos_hint: {'center_x': .75, 'center_y': .5}
+			background_color: TRANSPARENT
+
+			FloatLayout:	
+				ScrollView:
+					id: scrollview_wifi_guide_android
+					bar_width: 20 
+					size_hint: (None, None)
+					size: (480, 430)
+					GridLayout:
+						cols: 1
+						size_hint_y: None
+						height: self.minimum_height
+						Image:
+							source: 'images/wifi_projection_instructions_android.png'
+							size_hint: None, None
+							size: (480, 1582)
+
+				ScrollView:
+					id: scrollview_wifi_guide_ios
+					bar_width: 20 
+					size_hint: (None, None)
+					size: (480, 430)
+					GridLayout:
+						cols: 1
+						size_hint_y: None
+						height: self.minimum_height
+						Image:
+							source: 'images/wifi_projection_instructions_ios.png'
+							size_hint: None, None
+							size: (480, 1582)
+
+				ScrollView:
+					id: scrollview_wifi_guide_win
+					bar_width: 20 
+					size_hint: (None, None)
+					size: (480, 430)
+					GridLayout:
+						cols: 1
+						size_hint_y: None
+						height: self.minimum_height
+						Image:
+							source: 'images/wifi_projection_instructions_win.png'
+							size_hint: None, None
+							size: (480, 1582)
+
+			TabbedPanelHeader:
+				text: 'Android'
+				content: scrollview_wifi_guide_android
+			TabbedPanelHeader:
+				text: 'Mac/iOS'
+				content: scrollview_wifi_guide_ios
+			TabbedPanelHeader:
+				text: 'Windows'				
+				content: scrollview_wifi_guide_win
+
+<RebootScreen>:
+	name: 'rebootscreen'
+	FloatLayout:	
+		Label:
+			id: rebootscreenmsg
+			font_size: FONTLARGE
+			size_hint: (None, None)
+			pos_hint: {'center_x': .5, 'center_y': .5}
+			color: BLACK
+			text: 'Rebooting in 5 seconds...'
+
+<EmailScreen>:
+	name: 'emailscreen'
+	FloatLayout:
+		UISLabel:
+			id: emailscreenmsg
+			pos_hint: {'center_x': .48, 'center_y': .7}
+			text: 'An email has been sent to ITS Client Services.\n\nAn ITS team member will call the phone\nin the classroom within a few minutes.'
+			valign: 'middle'
+		
+		UISButton:
+			on_press: root.manager.current = 'main'
+			text: 'Back'
+			pos_hint: {'center_x': .1, 'center_y': .11}
+
+<HelpScreen>:
+	name: 'help_screen'	
+	FloatLayout:
+		VideoPlayer:
+			id: howto_video1
+			source: 'videos/small.webm'
+			thumbnail: 'videos/small.png'
+			state: 'stop'
+			allow_stretch: True 
+			allow_fullscreen: False
+		
+<HeaderScreen>:
+	name: 'headerscreen'
+	FloatLayout:	
+		Image:
+			source: 'images/its.png'
+			pos_hint: {'center_x': .5, 'center_y': .9}
+
+<LaptopScreen>:
+	name: 'laptopscreen'
+	FloatLayout:
+		UISButtonHelp:
+			id: laptop_help			
+			on_release: root.change_screens()
+
+		UISLabel:
+			id: laptop_label
+			text: 'Laptop'
+			pos_hint: {'center_x': .56, 'center_y': .72}
+			
+		UISButtonHome:
+			on_release: root.manager.current = 'main'
+			
+		HeaderScreen:
+			id: laptop_header	
+		
+		GridLayout:
+			cols: 2
+			rows: 1
+			spacing: 10
+			padding: 10
+			pos_hint: {'center_x': .87, 'center_y': .19}
+		
+			UISToggleButton:
+				id: laptop_vga
+				text: 'VGA'
+				group: 'laptopsource'
+				on_press: root.laptop_vga_src(self.state)
+				
+			UISToggleButton:
+				id: laptop_hdmi
+				text: 'HDMI'
+				group: 'laptopsource'
+				on_press: root.laptop_hdmi_src(self.state)
+
+<SharedScreen>:
+	vol_slider_p: vol_slider
+	audio_mute_p: audio_mute
+	video_mute_p: video_mute
+
+	name: 'shared_vol_screen'	
+
+	GridLayout:
+		cols: 1
+		rows: 2 
+		spacing: 10
+		padding: 10
+		pos_hint: {'center_x': .65, 'center_y': .19}				
+			
+		UISToggleButton:
+			id: video_mute
+			text: 'Video\nMute'
+			on_state: root.projector_video_mute(self.state)
+			
+		UISToggleButton:
+			id: audio_mute
+			text: 'Audio\nMute'
+			on_state: root.audio_mute(self.state)	
+
+	UISLabel:
+		text: 'Volume:'
+		pos_hint: {'center_x': .55, 'center_y': .17}
+
+	Slider:
+		id: vol_slider
+		size: (160, 100)
+		size_hint: (None, None)
+		orientation: 'horizontal'
+		pos_hint: {'center_x': .5, 'center_y': .1}
+		min: app.MIN_VOLUME_DB
+		max: app.MAX_VOLUME_DB
+		on_touch_up: root.audio_control_volume(self.value)
+		on_touch_down: root.audio_control_volume(self.value)
+		on_touch_move: root.audio_control_volume(self.value)
+
+	Label:
+		text: str(int(vol_slider.value))
+		font_size: FONTTINY
+		size_hint: (None, None)
+		color: BLACK
+		pos_hint: {'center_x': .54, 'center_y': .04}
+
+<HelpToolsScreen>:
+	name: 'help_tools_screen'
+	GridLayout:
+		cols: 1
+		rows: 4 
+		spacing: 10
+		padding: 10
+		pos_hint: {'center_x': .6, 'center_y': .52}				
+
+		Label:
+			id: help_ip_address
+			font_size: '10sp'
+			size: [50, 70]
+			size_hint: (None, None)
+			color: BLACK
+			
+		UISButton:
+			text: 'Email\nHelpdesk'
+			on_release: root.emailhelpdesk()
+			background_color: RED 
+			font_size: FONTSMALL
+
+		UISButton:
+			text: 'Restart\nSystem'
+			font_size: FONTSMALL
+			on_release: root.rebootipi()
+			
+		UISButton:
+			text: 'Home'
+			on_release: root.change_screens()
+
+<CableGuideToolsScreen>:
+	name: 'cable_guide_tools_screen'
+			
+	UISButton:
+		text: 'Back'
+		pos_hint: {'center_x': .5, 'center_y': .11}
+		on_release: root.change_screens()
